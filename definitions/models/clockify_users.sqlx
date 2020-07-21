@@ -1,0 +1,19 @@
+with source as (
+  select * from ${ref("users")}
+),
+renamed as (
+  select
+    id::TEXT as user_id,
+
+    -- details
+    name::TEXT as user_name,
+    email::TEXT as email,
+    status::TEXT as status,
+
+    -- metadata
+    profilepicture::TEXT as profile_picture,
+    _sdc_batched_at::TIMESTAMP as loaded_at
+  
+  from source
+)
+select * from renamed

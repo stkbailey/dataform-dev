@@ -1,0 +1,7 @@
+config {
+  type: "declaration",
+  database: "dev",
+  schema: "clockify",
+  name: "user_time_entries__tagids",
+  description: ""
+}

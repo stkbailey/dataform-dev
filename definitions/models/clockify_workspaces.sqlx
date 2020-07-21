@@ -1,0 +1,18 @@
+with source as (
+  select * from ${ref("workspaces")}
+),
+renamed as (
+  select
+    -- keys
+    id :: TEXT as workspace_id,
+
+    -- details
+    name :: TEXT as workspace_name,
+    imageurl :: TEXT as image_url,
+
+    -- metadata
+    _sdc_batched_at::TIMESTAMP as loaded_at
+  
+  from source
+)
+select * from renamed

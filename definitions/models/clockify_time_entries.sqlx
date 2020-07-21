@@ -1,0 +1,27 @@
+/* TODO: Parse Duration w/ REGEX: 'PT([\d]+D)?([\d]+H)?([\d]+M)?([\d]+S)?' */
+with source as (
+  select * from ${ref("user_time_entries")}
+),
+renamed as (
+  select
+    -- keys
+    id::TEXT as time_entry_id,
+    userid::TEXT as user_id,
+    projectid::TEXT as project_id,
+    taskid::TEXT as task_id,
+    workspaceid::TEXT as workspace_id,
+
+    -- details
+    description::TEXT as description,
+    billable::BOOLEAN as is_billable,
+    islocked::BOOLEAN as is_locked,
+    timeinterval__duration::TEXT as time_duration_code,
+    timeinterval__start::TIMESTAMP as start_time,
+    timeinterval__end::TIMESTAMP as end_time,
+
+    -- metadata
+    _sdc_batched_at::TIMESTAMP as loaded_at
+  
+  from source
+)
+select * from renamed

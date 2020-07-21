@@ -1,0 +1,30 @@
+with source as (
+  select * from ${ref("projects")}
+),
+renamed as (
+  select
+    -- keys
+    id :: TEXT as project_id,
+    clientid :: TEXT as client_id,
+    workspaceid :: TEXT as workspace_id,
+
+    -- details
+    name :: TEXT as project_name,
+    note :: TEXT as note,
+    duration :: TEXT as duration,
+    estimate__estimate :: TEXT as estimate,
+    estimate__type :: TEXT as estimate_type,
+    hourlyrate__amount :: TEXT as hourly_rate,
+
+    -- attributes
+    template :: BOOLEAN as is_template,
+    public :: BOOLEAN as is_public,
+    billable :: BOOLEAN as is_billable,
+    archived :: BOOLEAN as is_archived,
+
+    -- metadata
+    _sdc_batched_at::TIMESTAMP as loaded_at
+  
+  from source
+)
+select * from renamed

@@ -1,0 +1,15 @@
+with source as (
+  select * from ${ref("time_entries__tagids")}
+),
+renamed as (
+  select
+    -- keys
+    _sdc_source_key_id :: TEXT as time_entry_id,
+    _sdc_value :: TEXT as tag_id,
+
+   -- metadata
+    _sdc_sequence :: BIGINT as stitch_sequence_id
+  
+  from source
+)
+select * from renamed

@@ -5,7 +5,6 @@ renamed as (
   select
     -- keys
     id :: TEXT as client_id,
-    workspaceid :: TEXT as workspace_id,
 
     -- details
     name :: TEXT as client_name,

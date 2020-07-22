@@ -1,3 +1,5 @@
+config { type: "view" }
+
 with source as (
   select * from ${ref("user_time_entries__tagids")}
 ),

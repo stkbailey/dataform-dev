@@ -1,6 +1,31 @@
 {
     "tables": [
         {
+            "name": "dataform.clockify_clients",
+            "dependencies": [
+                "dev.clockify.clients"
+            ],
+            "type": "view",
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_clients"
+            },
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"clients\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as client_id,\n\n    -- details\n    name :: TEXT as client_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
+            "fileName": "definitions/models/clockify_clients.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "clients",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_clients"
+            }
+        },
+        {
             "name": "dataform.clockify_projects",
             "dependencies": [
                 "dev.clockify.projects"
@@ -57,54 +82,17 @@
                 "schema": "dataform",
                 "name": "clockify_projects"
             }
-        }
-    ],
-    "operations": [
-        {
-            "name": "dataform.clockify_clients",
-            "dependencies": [
-                "dev.clockify.clients"
-            ],
-            "target": {
-                "schema": "dataform",
-                "name": "clockify_clients"
-            },
-            "queries": [
-                "with source as (\n  select * from \"clockify\".\"clients\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as client_id,\n\n    -- details\n    name :: TEXT as client_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
-            ],
-            "fileName": "definitions/models/clockify_clients.sqlx",
-            "dependencyTargets": [
-                {
-                    "schema": "clockify",
-                    "name": "clients",
-                    "database": "dev"
-                }
-            ],
-            "canonicalTarget": {
-                "schema": "dataform",
-                "name": "clockify_clients"
-            }
         },
         {
             "name": "dataform.clockify_tags",
-            "dependencies": [
-                "dev.clockify.tags"
-            ],
+            "type": "view",
             "target": {
                 "schema": "dataform",
                 "name": "clockify_tags"
             },
-            "queries": [
-                "with source as (\n  select * from \"clockify\".\"tags\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as tag_id,\n    workspaceid :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as tag_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
-            ],
+            "query": "\n\nwith source as (\n  select * from tablename\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as tag_id,\n    workspaceid :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as tag_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
             "fileName": "definitions/models/clockify_tags.sqlx",
-            "dependencyTargets": [
-                {
-                    "schema": "clockify",
-                    "name": "tags",
-                    "database": "dev"
-                }
-            ],
             "canonicalTarget": {
                 "schema": "dataform",
                 "name": "clockify_tags"
@@ -115,13 +103,13 @@
             "dependencies": [
                 "dev.clockify.user_time_entries"
             ],
+            "type": "view",
             "target": {
                 "schema": "dataform",
                 "name": "clockify_time_entries"
             },
-            "queries": [
-                "/* TODO: Parse Duration w/ REGEX: 'PT([d]+D)?([d]+H)?([d]+M)?([d]+S)?' */\nwith source as (\n  select * from \"clockify\".\"user_time_entries\"\n),\nrenamed as (\n  select\n    -- keys\n    id::TEXT as time_entry_id,\n    userid::TEXT as user_id,\n    projectid::TEXT as project_id,\n    taskid::TEXT as task_id,\n    workspaceid::TEXT as workspace_id,\n\n    -- details\n    description::TEXT as description,\n    billable::BOOLEAN as is_billable,\n    islocked::BOOLEAN as is_locked,\n    timeinterval__duration::TEXT as time_duration_code,\n    timeinterval__start::TIMESTAMP as start_time,\n    timeinterval__end::TIMESTAMP as end_time,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
-            ],
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"user_time_entries\"\n),\nrenamed as (\n  select\n    -- keys\n    id::TEXT as time_entry_id,\n    userid::TEXT as user_id,\n    projectid::TEXT as project_id,\n    taskid::TEXT as task_id,\n    workspaceid::TEXT as workspace_id,\n\n    -- details\n    description::TEXT as description,\n    billable::BOOLEAN as is_billable,\n    islocked::BOOLEAN as is_locked,\n    timeinterval__duration::TEXT as time_duration_code,\n    timeinterval__start::TIMESTAMP as start_time,\n    timeinterval__end::TIMESTAMP as end_time,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
             "fileName": "definitions/models/clockify_time_entries.sqlx",
             "dependencyTargets": [
                 {
@@ -140,13 +128,13 @@
             "dependencies": [
                 "dev.clockify.user_time_entries__tagids"
             ],
+            "type": "view",
             "target": {
                 "schema": "dataform",
                 "name": "clockify_time_entry_tag_ids"
             },
-            "queries": [
-                "with source as (\n  select * from \"clockify\".\"user_time_entries__tagids\"\n),\nrenamed as (\n  select\n    -- keys\n    _sdc_source_key_id :: TEXT as time_entry_id,\n    _sdc_value :: TEXT as tag_id,\n\n   -- metadata\n    _sdc_sequence :: BIGINT as stitch_sequence_id\n  \n  from source\n)\nselect * from renamed"
-            ],
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"user_time_entries__tagids\"\n),\nrenamed as (\n  select\n    -- keys\n    _sdc_source_key_id :: TEXT as time_entry_id,\n    _sdc_value :: TEXT as tag_id,\n\n   -- metadata\n    _sdc_sequence :: BIGINT as stitch_sequence_id\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
             "fileName": "definitions/models/clockify_time_entry_tag_ids.sqlx",
             "dependencyTargets": [
                 {
@@ -165,13 +153,13 @@
             "dependencies": [
                 "dev.clockify.users"
             ],
+            "type": "view",
             "target": {
                 "schema": "dataform",
                 "name": "clockify_users"
             },
-            "queries": [
-                "with source as (\n  select * from \"clockify\".\"users\"\n),\nrenamed as (\n  select\n    id::TEXT as user_id,\n\n    -- details\n    name::TEXT as user_name,\n    email::TEXT as email,\n    status::TEXT as status,\n\n    -- metadata\n    profilepicture::TEXT as profile_picture,\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
-            ],
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"users\"\n),\nrenamed as (\n  select\n    id::TEXT as user_id,\n\n    -- details\n    name::TEXT as user_name,\n    email::TEXT as email,\n    status::TEXT as status,\n\n    -- metadata\n    profilepicture::TEXT as profile_picture,\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
             "fileName": "definitions/models/clockify_users.sqlx",
             "dependencyTargets": [
                 {
@@ -190,13 +178,13 @@
             "dependencies": [
                 "dev.clockify.workspaces"
             ],
+            "type": "view",
             "target": {
                 "schema": "dataform",
                 "name": "clockify_workspaces"
             },
-            "queries": [
-                "with source as (\n  select * from \"clockify\".\"workspaces\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as workspace_name,\n    imageurl :: TEXT as image_url,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
-            ],
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"workspaces\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as workspace_name,\n    imageurl :: TEXT as image_url,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
             "fileName": "definitions/models/clockify_workspaces.sqlx",
             "dependencyTargets": [
                 {
@@ -239,6 +227,9 @@
                 "schema": "clockify",
                 "name": "projects",
                 "database": "dev"
+            },
+            "actionDescriptor": {
+                "description": ""
             },
             "fileName": "definitions/sources/projects.sqlx",
             "canonicalTarget": {

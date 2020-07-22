@@ -3,5 +3,14 @@ config {
   database: "dev",
   schema: "clockify",
   name: "projects",
-  description: ""
+  description: {
+    description: "woopity",
+    tags: ["one-two"],
+    columns: {
+      id: {
+        description: "A primary key",
+        tags: "so special"
+      }
+    }
+  }
 }

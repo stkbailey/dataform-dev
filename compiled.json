@@ -1,0 +1,391 @@
+{
+    "tables": [
+        {
+            "name": "dataform.clockify_projects",
+            "dependencies": [
+                "dev.clockify.projects"
+            ],
+            "type": "table",
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_projects"
+            },
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"projects\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as project_id,\n    clientid :: TEXT as client_id,\n    workspaceid :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as project_name,\n    note :: TEXT as note,\n    duration :: TEXT as duration,\n    estimate__estimate :: TEXT as estimate,\n    estimate__type :: TEXT as estimate_type,\n    hourlyrate__amount :: TEXT as hourly_rate,\n\n    -- attributes\n    template :: BOOLEAN as is_template,\n    public :: BOOLEAN as is_public,\n    billable :: BOOLEAN as is_billable,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "disabled": false,
+            "fileName": "definitions/models/clockify_projects.sqlx",
+            "tags": [
+                "table tag",
+                "cool table tag"
+            ],
+            "actionDescriptor": {
+                "description": "This table defines something",
+                "columns": [
+                    {
+                        "description": "A primary key",
+                        "path": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "description": "A foreign key",
+                        "path": [
+                            "clientid"
+                        ],
+                        "tags": [
+                            "One tag"
+                        ]
+                    },
+                    {
+                        "path": [
+                            "archived"
+                        ],
+                        "tags": [
+                            "two tags",
+                            "dude"
+                        ]
+                    }
+                ]
+            },
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "projects",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_projects"
+            }
+        }
+    ],
+    "operations": [
+        {
+            "name": "dataform.clockify_clients",
+            "dependencies": [
+                "dev.clockify.clients"
+            ],
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_clients"
+            },
+            "queries": [
+                "with source as (\n  select * from \"clockify\".\"clients\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as client_id,\n\n    -- details\n    name :: TEXT as client_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
+            ],
+            "fileName": "definitions/models/clockify_clients.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "clients",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_clients"
+            }
+        },
+        {
+            "name": "dataform.clockify_tags",
+            "dependencies": [
+                "dev.clockify.tags"
+            ],
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_tags"
+            },
+            "queries": [
+                "with source as (\n  select * from \"clockify\".\"tags\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as tag_id,\n    workspaceid :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as tag_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
+            ],
+            "fileName": "definitions/models/clockify_tags.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "tags",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_tags"
+            }
+        },
+        {
+            "name": "dataform.clockify_time_entries",
+            "dependencies": [
+                "dev.clockify.user_time_entries"
+            ],
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_time_entries"
+            },
+            "queries": [
+                "/* TODO: Parse Duration w/ REGEX: 'PT([d]+D)?([d]+H)?([d]+M)?([d]+S)?' */\nwith source as (\n  select * from \"clockify\".\"user_time_entries\"\n),\nrenamed as (\n  select\n    -- keys\n    id::TEXT as time_entry_id,\n    userid::TEXT as user_id,\n    projectid::TEXT as project_id,\n    taskid::TEXT as task_id,\n    workspaceid::TEXT as workspace_id,\n\n    -- details\n    description::TEXT as description,\n    billable::BOOLEAN as is_billable,\n    islocked::BOOLEAN as is_locked,\n    timeinterval__duration::TEXT as time_duration_code,\n    timeinterval__start::TIMESTAMP as start_time,\n    timeinterval__end::TIMESTAMP as end_time,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
+            ],
+            "fileName": "definitions/models/clockify_time_entries.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "user_time_entries",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_time_entries"
+            }
+        },
+        {
+            "name": "dataform.clockify_time_entry_tag_ids",
+            "dependencies": [
+                "dev.clockify.user_time_entries__tagids"
+            ],
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_time_entry_tag_ids"
+            },
+            "queries": [
+                "with source as (\n  select * from \"clockify\".\"user_time_entries__tagids\"\n),\nrenamed as (\n  select\n    -- keys\n    _sdc_source_key_id :: TEXT as time_entry_id,\n    _sdc_value :: TEXT as tag_id,\n\n   -- metadata\n    _sdc_sequence :: BIGINT as stitch_sequence_id\n  \n  from source\n)\nselect * from renamed"
+            ],
+            "fileName": "definitions/models/clockify_time_entry_tag_ids.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "user_time_entries__tagids",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_time_entry_tag_ids"
+            }
+        },
+        {
+            "name": "dataform.clockify_users",
+            "dependencies": [
+                "dev.clockify.users"
+            ],
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_users"
+            },
+            "queries": [
+                "with source as (\n  select * from \"clockify\".\"users\"\n),\nrenamed as (\n  select\n    id::TEXT as user_id,\n\n    -- details\n    name::TEXT as user_name,\n    email::TEXT as email,\n    status::TEXT as status,\n\n    -- metadata\n    profilepicture::TEXT as profile_picture,\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
+            ],
+            "fileName": "definitions/models/clockify_users.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "users",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_users"
+            }
+        },
+        {
+            "name": "dataform.clockify_workspaces",
+            "dependencies": [
+                "dev.clockify.workspaces"
+            ],
+            "target": {
+                "schema": "dataform",
+                "name": "clockify_workspaces"
+            },
+            "queries": [
+                "with source as (\n  select * from \"clockify\".\"workspaces\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as workspace_name,\n    imageurl :: TEXT as image_url,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed"
+            ],
+            "fileName": "definitions/models/clockify_workspaces.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "workspaces",
+                    "database": "dev"
+                }
+            ],
+            "canonicalTarget": {
+                "schema": "dataform",
+                "name": "clockify_workspaces"
+            }
+        }
+    ],
+    "projectConfig": {
+        "warehouse": "redshift",
+        "defaultSchema": "dataform",
+        "assertionSchema": "dataform_assertions",
+        "useRunCache": false
+    },
+    "graphErrors": {},
+    "declarations": [
+        {
+            "name": "dev.clockify.clients",
+            "target": {
+                "schema": "clockify",
+                "name": "clients",
+                "database": "dev"
+            },
+            "fileName": "definitions/sources/clients.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "clients",
+                "database": "dev"
+            }
+        },
+        {
+            "name": "dev.clockify.projects",
+            "target": {
+                "schema": "clockify",
+                "name": "projects",
+                "database": "dev"
+            },
+            "fileName": "definitions/sources/projects.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "projects",
+                "database": "dev"
+            }
+        },
+        {
+            "name": "dev.clockify.tags",
+            "target": {
+                "schema": "clockify",
+                "name": "tags",
+                "database": "dev"
+            },
+            "fileName": "definitions/sources/tags.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "tags",
+                "database": "dev"
+            }
+        },
+        {
+            "name": "dev.clockify.user_time_entries__tagids",
+            "target": {
+                "schema": "clockify",
+                "name": "user_time_entries__tagids",
+                "database": "dev"
+            },
+            "fileName": "definitions/sources/user_time_entries__tagids.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "user_time_entries__tagids",
+                "database": "dev"
+            }
+        },
+        {
+            "name": "dev.clockify.user_time_entries",
+            "target": {
+                "schema": "clockify",
+                "name": "user_time_entries",
+                "database": "dev"
+            },
+            "fileName": "definitions/sources/user_time_entries.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "user_time_entries",
+                "database": "dev"
+            }
+        },
+        {
+            "name": "dev.clockify.users",
+            "target": {
+                "schema": "clockify",
+                "name": "users",
+                "database": "dev"
+            },
+            "actionDescriptor": {
+                "description": "raw badges table"
+            },
+            "fileName": "definitions/sources/users.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "users",
+                "database": "dev"
+            }
+        },
+        {
+            "name": "dev.clockify.workspaces",
+            "target": {
+                "schema": "clockify",
+                "name": "workspaces",
+                "database": "dev"
+            },
+            "fileName": "definitions/sources/workspaces.sqlx",
+            "canonicalTarget": {
+                "schema": "clockify",
+                "name": "workspaces",
+                "database": "dev"
+            }
+        }
+    ],
+    "dataformCoreVersion": "1.8.1",
+    "targets": [
+        {
+            "schema": "dataform",
+            "name": "clockify_clients"
+        },
+        {
+            "schema": "dataform",
+            "name": "clockify_projects"
+        },
+        {
+            "schema": "dataform",
+            "name": "clockify_tags"
+        },
+        {
+            "schema": "dataform",
+            "name": "clockify_time_entries"
+        },
+        {
+            "schema": "dataform",
+            "name": "clockify_time_entry_tag_ids"
+        },
+        {
+            "schema": "dataform",
+            "name": "clockify_users"
+        },
+        {
+            "schema": "dataform",
+            "name": "clockify_workspaces"
+        },
+        {
+            "schema": "clockify",
+            "name": "clients",
+            "database": "dev"
+        },
+        {
+            "schema": "clockify",
+            "name": "projects",
+            "database": "dev"
+        },
+        {
+            "schema": "clockify",
+            "name": "tags",
+            "database": "dev"
+        },
+        {
+            "schema": "clockify",
+            "name": "user_time_entries__tagids",
+            "database": "dev"
+        },
+        {
+            "schema": "clockify",
+            "name": "user_time_entries",
+            "database": "dev"
+        },
+        {
+            "schema": "clockify",
+            "name": "users",
+            "database": "dev"
+        },
+        {
+            "schema": "clockify",
+            "name": "workspaces",
+            "database": "dev"
+        }
+    ]
+}
+

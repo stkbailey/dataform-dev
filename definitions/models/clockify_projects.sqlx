@@ -1,3 +1,19 @@
+config {
+  type: "table",
+  description: "This table defines something",
+  tags: ["table tag", "cool table tag"],
+  columns: {
+    id: "A primary key",
+    clientid: {
+      description: "A foreign key",
+      tags: "One tag"
+    },
+    archived: {
+      tags: ["two tags", "dude"]
+    }
+  }
+}
+
 with source as (
   select * from ${ref("projects")}
 ),

@@ -85,14 +85,24 @@
         },
         {
             "name": "dataform.clockify_tags",
+            "dependencies": [
+                "dev.clockify.tags"
+            ],
             "type": "view",
             "target": {
                 "schema": "dataform",
                 "name": "clockify_tags"
             },
-            "query": "\n\nwith source as (\n  select * from tablename\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as tag_id,\n    workspaceid :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as tag_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
+            "query": "\n\nwith source as (\n  select * from \"clockify\".\"tags\"\n),\nrenamed as (\n  select\n    -- keys\n    id :: TEXT as tag_id,\n    workspaceid :: TEXT as workspace_id,\n\n    -- details\n    name :: TEXT as tag_name,\n    archived :: BOOLEAN as is_archived,\n\n    -- metadata\n    _sdc_batched_at::TIMESTAMP as loaded_at\n  \n  from source\n)\nselect * from renamed",
             "disabled": false,
             "fileName": "definitions/models/clockify_tags.sqlx",
+            "dependencyTargets": [
+                {
+                    "schema": "clockify",
+                    "name": "tags",
+                    "database": "dev"
+                }
+            ],
             "canonicalTarget": {
                 "schema": "dataform",
                 "name": "clockify_tags"
